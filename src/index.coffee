@@ -20,6 +20,11 @@ url        = require 'url'
 watchify   = require 'watchify'
 
 
+isProduction = ->
+  environments = [process.env['NODE_ENV'], argv['node_env']]
+  'production' in environments
+
+
 browserifyOptions =
   debug: not isProduction()
   entries: ['./app/index.coffee']
@@ -35,12 +40,9 @@ defaultConfig =
   style:  './style/index.less'
   test:   './test/**/*_spec.coffee'
 
+
 browserifyOptions = _.assign({}, watchify.args, browserifyOptions)
 browserified = browserify(browserifyOptions)
-
-isProduction = ->
-  environments = [process.env['NODE_ENV'], argv['node_env']]
-  'production' in environments
 
 
 ugly = ->
