@@ -95,7 +95,13 @@ module.exports = (project=defaultConfig) ->
     gulp.src(project.dest, read: false)
       .pipe(clean())
 
+
   gulp.task 'src', build
+
+
+  gulp.task 'static', ->
+    gulp.src(project.static)
+      .pipe(gulp.dest(project.dest))
 
 
   gulp.task 'style', ->
