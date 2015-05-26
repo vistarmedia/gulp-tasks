@@ -1,3 +1,6 @@
+require 'gulp-cjsx'
+require 'xunit-file'
+
 
 _          = require 'lodash'
 argv       = require('yargs').argv
