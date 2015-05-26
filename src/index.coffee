@@ -2,23 +2,25 @@ require 'gulp-cjsx'
 require 'xunit-file'
 
 
-_          = require 'lodash'
-argv       = require('yargs').argv
-browserify = require 'browserify'
-buffer     = require 'vinyl-buffer'
-concat     = require 'gulp-concat'
-connect    = require 'connect'
-connectjs  = require 'connect-livereload'
-gulp       = require 'gulp'
-gulpif     = require 'gulp-if'
-gutil      = require 'gulp-util'
-less       = require 'gulp-less'
-livereload = require 'gulp-livereload'
-mocha      = require 'gulp-mocha'
-serve      = require 'serve-static'
-source     = require 'vinyl-source-stream'
-uglify     = require 'gulp-uglify'
-watchify   = require 'watchify'
+_           = require 'lodash'
+argv        = require('yargs').argv
+browserify  = require 'browserify'
+buffer      = require 'vinyl-buffer'
+clean       = require 'gulp-clean'
+concat      = require 'gulp-concat'
+connect     = require 'connect'
+connectjs   = require 'connect-livereload'
+gulp        = require 'gulp'
+gulpif      = require 'gulp-if'
+gutil       = require 'gulp-util'
+less        = require 'gulp-less'
+livereload  = require 'gulp-livereload'
+mocha       = require 'gulp-mocha'
+runSequence = require 'run-sequence'
+serve       = require 'serve-static'
+source      = require 'vinyl-source-stream'
+uglify      = require 'gulp-uglify'
+watchify    = require 'watchify'
 
 
 isProduction = ->
@@ -72,7 +74,8 @@ module.exports = (project=defaultConfig) ->
   gulp.task 'default', ['build', 'watch']
 
 
-  gulp.task 'build', ['src', 'static', 'style']
+  gulp.task 'build', ->
+    runSequence('clean', ['src', 'static', 'style'])
 
 
   gulp.task 'watch:serve', ['watch', 'serve']
@@ -86,6 +89,11 @@ module.exports = (project=defaultConfig) ->
       .pipe(ugly())
       .pipe(concat('app.js'))
       .pipe(gulp.dest(project.dest))
+
+
+  gulp.task 'clean', ->
+    gulp.src(project.dest, read: false)
+      .pipe(clean())
 
   gulp.task 'src', build
 
