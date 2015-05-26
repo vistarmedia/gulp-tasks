@@ -14,9 +14,7 @@ livereload = require 'gulp-livereload'
 mocha      = require 'gulp-mocha'
 serve      = require 'serve-static'
 source     = require 'vinyl-source-stream'
-template   = require 'gulp-template'
 uglify     = require 'gulp-uglify'
-url        = require 'url'
 watchify   = require 'watchify'
 
 
@@ -39,7 +37,6 @@ defaultConfig =
   index:  './static/index.html'
   style:  './style/index.less'
   test:   './test/**/*_spec.coffee'
-
 
 browserifyOptions = _.assign({}, watchify.args, browserifyOptions)
 browserified = browserify(browserifyOptions)
@@ -78,7 +75,7 @@ module.exports = (project=defaultConfig) ->
   gulp.task 'watch:serve', ['watch', 'serve']
 
 
-  gulp.task 'src', ->
+  build = ->
     browserified.bundle()
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
       .pipe(source('./app/index.coffee'))
@@ -86,6 +83,8 @@ module.exports = (project=defaultConfig) ->
       .pipe(ugly())
       .pipe(concat('app.js'))
       .pipe(gulp.dest(project.dest))
+
+  gulp.task 'src', build
 
 
   gulp.task 'style', ->
@@ -123,7 +122,7 @@ module.exports = (project=defaultConfig) ->
     watchified.on 'log', gutil.log
     watchified.on 'update', (changes) ->
       gutil.log "handling changes (#{changes.length})..."
-      buildSrc()
+      build()
 
     gulp.watch(project.style, ['style'])
     gulp.watch(project.static, ['static'])
