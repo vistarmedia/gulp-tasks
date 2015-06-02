@@ -28,13 +28,6 @@ isProduction = ->
   'production' in environments
 
 
-browserifyOptions =
-  debug: not isProduction()
-  entries: ['./app/index.coffee']
-  extensions: ['.coffee']
-  transform: ['coffee-reactify']
-
-
 defaultConfig =
   dest:   './build/'
   src:    './app/**/*.coffee'
@@ -42,10 +35,11 @@ defaultConfig =
   index:  './static/index.html'
   style:  './style/index.less'
   test:   './test/**/*_spec.coffee'
-
-browserifyOptions = _.assign({}, watchify.args, browserifyOptions)
-browserified = browserify(browserifyOptions)
-
+  browserify:
+    debug:      not isProduction()
+    entries:    ['./app/index.coffee']
+    extensions: ['.coffee']
+    transform:  ['coffee-reactify']
 
 ugly = ->
   if isProduction()
@@ -54,10 +48,14 @@ ugly = ->
     gutil.noop()
 
 
-module.exports = (project=defaultConfig) ->
+module.exports = (projectConfig={}) ->
+  config = _.merge({}, defaultConfig, projectConfig)
+
+  browserifyOpts = _.assign({}, watchify.args, config.browserify)
+  browserified = browserify(browserifyOpts)
 
   runTests = (reporter='dot', bail=true) ->
-    gulp.src(project.test, read: false)
+    gulp.src(config.test, read: false)
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
         gutil.log(err.toString())
@@ -84,15 +82,15 @@ module.exports = (project=defaultConfig) ->
   build = ->
     browserified.bundle()
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-      .pipe(source('./app/index.coffee'))
+      .pipe(source(config.browserify.entries[0]))
       .pipe(buffer())
       .pipe(ugly())
       .pipe(concat('app.js'))
-      .pipe(gulp.dest(project.dest))
+      .pipe(gulp.dest(config.dest))
 
 
   gulp.task 'clean', ->
-    gulp.src(project.dest, read: false)
+    gulp.src(config.dest, read: false)
       .pipe(clean())
 
 
@@ -100,15 +98,15 @@ module.exports = (project=defaultConfig) ->
 
 
   gulp.task 'static', ->
-    gulp.src(project.static)
-      .pipe(gulp.dest(project.dest))
+    gulp.src(config.static)
+      .pipe(gulp.dest(config.dest))
 
 
   gulp.task 'style', ->
-    gulp.src(project.style)
+    gulp.src(config.style)
       .pipe(less())
       .pipe(concat('app.css'))
-      .pipe(gulp.dest(project.dest))
+      .pipe(gulp.dest(config.dest))
 
 
   gulp.task 'serve', ['build'], ->
@@ -116,10 +114,10 @@ module.exports = (project=defaultConfig) ->
     app = connect()
     app
       .use(connectjs())
-      .use(serve(project.dest))
+      .use(serve(config.dest))
     app.listen(process.env['PORT'] or 4001)
     livereload.listen()
-    gulp.watch("#{project.dest}/**").on 'change', (file) ->
+    gulp.watch("#{config.dest}/**").on 'change', (file) ->
       lr.changed(file.path)
 
 
@@ -129,11 +127,11 @@ module.exports = (project=defaultConfig) ->
 
   gulp.task 'test:watch', ->
     runTests()
-    gulp.watch([project.src, project.test], -> runTests())
+    gulp.watch([config.src, config.test], -> runTests())
 
 
   gulp.task 'watch', ->
-    gulp.watch([project.test], -> runTests())
+    gulp.watch([config.test], -> runTests())
 
     watchified = watchify(browserified)
     watchified.on 'log', gutil.log
@@ -141,8 +139,8 @@ module.exports = (project=defaultConfig) ->
       gutil.log "handling changes (#{changes.length})..."
       build()
 
-    gulp.watch(project.style, ['style'])
-    gulp.watch(project.static, ['static'])
+    gulp.watch(config.style, ['style'])
+    gulp.watch(config.static, ['static'])
 
 
   gulp.task 'test:xunit', ->

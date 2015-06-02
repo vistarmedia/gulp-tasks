@@ -1,6 +1,6 @@
 {
   "name":         "vistar-gulp-tasks",
-  "version":      "1.0.3",
+  "version":      "1.0.4",
   "description":  "Commonly used gulp tasks",
   "main":         "src/index.coffee",
   "files":        ["src/index.coffee"],

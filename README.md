@@ -28,6 +28,8 @@ project =
   index:  './static/index.html'
   style:  './style/index.less'
   test:   './test/**/*_spec.coffee'
+  browserify:
+    paths: ['./app']
 
 require('vistar-gulp-tasks')(project)
 ```
@@ -42,4 +44,9 @@ project =
   index:  './static/index.html'
   style:  './style/index.less'
   test:   './test/**/*_spec.coffee'
+  browserify:
+    debug:      not isProduction()
+    entries:    ['./app/index.coffee']
+    extensions: ['.coffee']
+    transform:  ['coffee-reactify']
 ```
