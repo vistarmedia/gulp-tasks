@@ -1,6 +1,4 @@
 require 'gulp-cjsx'
-require 'xunit-file'
-
 
 _           = require 'lodash'
 argv        = require('yargs').argv
@@ -144,7 +142,7 @@ module.exports = (projectConfig={}) ->
 
 
   gulp.task 'test:xunit', ->
-    exitOnFinish runTests, reporter='xunit-file', bail=false
+    exitOnFinish runTests, reporter='mocha-jenkins-reporter', bail=false
 
 
   gulp.task 'test:spec', ->
