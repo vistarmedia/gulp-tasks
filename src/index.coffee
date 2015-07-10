@@ -1,24 +1,25 @@
 require 'gulp-cjsx'
 
-_           = require 'lodash'
-argv        = require('yargs').argv
-browserify  = require 'browserify'
-buffer      = require 'vinyl-buffer'
-clean       = require 'gulp-clean'
-concat      = require 'gulp-concat'
-connect     = require 'connect'
-connectjs   = require 'connect-livereload'
-gulp        = require 'gulp'
-gulpif      = require 'gulp-if'
-gutil       = require 'gulp-util'
-less        = require 'gulp-less'
-livereload  = require 'gulp-livereload'
-mocha       = require 'gulp-mocha'
-runSequence = require 'run-sequence'
-serve       = require 'serve-static'
-source      = require 'vinyl-source-stream'
-uglify      = require 'gulp-uglify'
-watchify    = require 'watchify'
+_            = require 'lodash'
+argv         = require('yargs').argv
+browserify   = require 'browserify'
+buffer       = require 'vinyl-buffer'
+clean        = require 'gulp-clean'
+concat       = require 'gulp-concat'
+connect      = require 'connect'
+connectjs    = require 'connect-livereload'
+grepContents = require 'gulp-grep-contents'
+gulp         = require 'gulp'
+gulpif       = require 'gulp-if'
+gutil        = require 'gulp-util'
+less         = require 'gulp-less'
+livereload   = require 'gulp-livereload'
+mocha        = require 'gulp-mocha'
+runSequence  = require 'run-sequence'
+serve        = require 'serve-static'
+source       = require 'vinyl-source-stream'
+uglify       = require 'gulp-uglify'
+watchify     = require 'watchify'
 
 
 isProduction = ->
@@ -54,6 +55,13 @@ module.exports = (projectConfig={}) ->
 
   runTests = (reporter='dot', bail=true) ->
     gulp.src(config.test, read: false)
+      .pipe(mocha(reporter: reporter, bail: bail))
+      .on 'error', (err) ->
+        gutil.log(err.toString())
+
+  runTestsWithOnly = (reporter='dot', bail=true) ->
+    gulp.src(config.test, read: true)
+      .pipe(grepContents(/(describe|context|it)\.only/))
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
         gutil.log(err.toString())
@@ -121,6 +129,10 @@ module.exports = (projectConfig={}) ->
 
   gulp.task 'test', ->
     exitOnFinish runTests
+
+
+  gulp.task 'test:only', ->
+    exitOnFinish runTestsWithOnly
 
 
   gulp.task 'test:watch', ->
