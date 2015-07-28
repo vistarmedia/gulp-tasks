@@ -6,7 +6,7 @@ Coffeescript, Less, React, Browserify, CJSX, Mocha; all the hits.
 In your `package.json`
 
 ```
-devDependencies: {
+"devDependencies": {
   "vistar-gulp-tasks": "git://github.com/vistarmedia/gulp-tasks.git"
 }
 
