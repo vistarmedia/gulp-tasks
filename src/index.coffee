@@ -28,12 +28,14 @@ isProduction = ->
 
 
 defaultConfig =
-  dest:   './build/'
-  src:    './app/**/*.coffee'
-  static: './static/**'
-  index:  './static/index.html'
-  style:  './style/index.less'
-  test:   './test/**/*_spec.coffee'
+  dest:     './build/'
+  src:      './app/**/*.coffee'
+  static:   './static/**'
+  index:    './static/index.html'
+  styleSrc: './style/**/*.less'
+  styleApp: './app/**/*.less'
+  style:    './style/index.less'
+  test:     './test/**/*_spec.coffee'
   browserify:
     debug:      not isProduction()
     entries:    ['./app/index.coffee']
@@ -149,7 +151,7 @@ module.exports = (projectConfig={}) ->
       gutil.log "handling changes (#{changes.length})..."
       build()
 
-    gulp.watch(config.style, ['style'])
+    gulp.watch([config.styleApp, config.styleSrc], ['style'])
     gulp.watch(config.static, ['static'])
 
 
