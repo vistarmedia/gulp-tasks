@@ -32,8 +32,8 @@ defaultConfig =
   src:      './app/**/*.coffee'
   static:   './static/**'
   index:    './static/index.html'
-  stylesrc: './style/**/*.less'
-  styleapp: './app/**/*.less'
+  styleSrc: './style/**/*.less'
+  styleApp: './app/**/*.less'
   style:    './style/index.less'
   test:     './test/**/*_spec.coffee'
   browserify:
