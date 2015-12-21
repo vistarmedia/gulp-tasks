@@ -151,7 +151,7 @@ module.exports = (projectConfig={}) ->
       gutil.log "handling changes (#{changes.length})..."
       build()
 
-    gulp.watch([config.styleapp, config.stylesrc], ['style'])
+    gulp.watch([config.styleApp, config.styleSrc], ['style'])
     gulp.watch(config.static, ['static'])
 
 
