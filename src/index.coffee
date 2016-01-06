@@ -41,6 +41,8 @@ defaultConfig =
     entries:    ['./app/index.coffee']
     extensions: ['.coffee']
     transform:  ['coffee-reactify']
+  mocha:
+    reporter: 'dot'
 
 ugly = ->
   if isProduction()
@@ -55,13 +57,13 @@ module.exports = (projectConfig={}) ->
   browserifyOpts = _.assign({}, watchify.args, config.browserify)
   browserified = browserify(browserifyOpts)
 
-  runTests = (reporter='dot', bail=true) ->
+  runTests = (reporter=projectConfig.mocha.reporter, bail=true) ->
     gulp.src(config.test, read: false)
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
         gutil.log(err.toString())
 
-  runTestsWithOnly = (reporter='dot', bail=true) ->
+  runTestsWithOnly = (reporter=projectConfig.mocha.reporter, bail=true) ->
     gulp.src(config.test, read: true)
       .pipe(grepContents(/(describe|context|it)\.only/))
       .pipe(mocha(reporter: reporter, bail: bail))
