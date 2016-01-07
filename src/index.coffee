@@ -44,11 +44,16 @@ defaultConfig =
   mocha:
     reporter: 'dot'
 
+
 ugly = ->
   if isProduction()
     uglify()
   else
     gutil.noop()
+
+
+testReporter = (config) ->
+  config.mocha?.reporter or 'dot'
 
 
 module.exports = (projectConfig={}) ->
@@ -57,13 +62,13 @@ module.exports = (projectConfig={}) ->
   browserifyOpts = _.assign({}, watchify.args, config.browserify)
   browserified = browserify(browserifyOpts)
 
-  runTests = (reporter=projectConfig.mocha.reporter, bail=true) ->
+  runTests = (reporter=testReporter(projectConfig), bail=true) ->
     gulp.src(config.test, read: false)
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
         gutil.log(err.toString())
 
-  runTestsWithOnly = (reporter=projectConfig.mocha.reporter, bail=true) ->
+  runTestsWithOnly = (reporter=testReporter(projectConfig), bail=true) ->
     gulp.src(config.test, read: true)
       .pipe(grepContents(/(describe|context|it)\.only/))
       .pipe(mocha(reporter: reporter, bail: bail))
