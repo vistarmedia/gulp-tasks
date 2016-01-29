@@ -91,7 +91,12 @@ module.exports = (projectConfig={}) ->
     runSequence('clean', ['src', 'static', 'style'])
 
 
-  gulp.task 'watch:serve', ['watch', 'serve']
+  gulp.task 'serve', ->
+    runSequence('clean', ['src', 'static', 'style'], ['_serve'])
+
+
+  gulp.task 'watch:serve', ->
+    runSequence('clean', ['src', 'static', 'style'], ['watch', '_serve'])
 
 
   build = ->
@@ -124,7 +129,7 @@ module.exports = (projectConfig={}) ->
       .pipe(gulp.dest(config.dest))
 
 
-  gulp.task 'serve', ['build'], ->
+  gulp.task '_serve', ->
     lr  = livereload()
     app = connect()
     app
