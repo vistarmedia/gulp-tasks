@@ -92,11 +92,11 @@ module.exports = (projectConfig={}) ->
 
 
   gulp.task 'serve', ->
-    runSequence('clean', ['src', 'static', 'style'], ['_serve'])
+    runSequence('clean', ['src', 'static', 'style'], '_serve')
 
 
   gulp.task 'watch:serve', ->
-    runSequence('clean', ['src', 'static', 'style'], ['watch', '_serve'])
+    runSequence('clean', ['src', 'static', 'style', 'watch'], '_serve')
 
 
   build = ->
