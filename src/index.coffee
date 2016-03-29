@@ -66,6 +66,7 @@ module.exports = (projectConfig={}) ->
     gulp.src(config.test, read: false)
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
+        err.showStack = true
         gutil.log(err.toString())
 
   runTestsWithOnly = (reporter=testReporter(projectConfig), bail=true) ->
@@ -73,6 +74,7 @@ module.exports = (projectConfig={}) ->
       .pipe(grepContents(/(describe|context|it)\.only/))
       .pipe(mocha(reporter: reporter, bail: bail))
       .on 'error', (err) ->
+        err.showStack = true
         gutil.log(err.toString())
 
   exitOnFinish = (func, args...) ->
