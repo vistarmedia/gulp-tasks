@@ -103,7 +103,9 @@ module.exports = (projectConfig={}) ->
 
   build = ->
     browserified.bundle()
-      .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+      .on('error', (err) ->
+        gutil.log('Browserify Error', err)
+        process.exit(1))
       .pipe(source(config.browserify.entries[0]))
       .pipe(buffer())
       .pipe(ugly())
