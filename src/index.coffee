@@ -101,9 +101,11 @@ module.exports = (projectConfig={}) ->
     runSequence('clean', ['src', 'static', 'style', 'watch'], '_serve')
 
 
-  build = ->
+  build = ({quiet}={}) ->
     browserified.bundle()
-      .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+      .on('error', (err) ->
+        gutil.log('Browserify Error', err)
+        unless quiet then process.exit(1))
       .pipe(source(config.browserify.entries[0]))
       .pipe(buffer())
       .pipe(ugly())
@@ -163,7 +165,7 @@ module.exports = (projectConfig={}) ->
     watchified.on 'log', gutil.log
     watchified.on 'update', (changes) ->
       gutil.log "handling changes (#{changes.length})..."
-      build()
+      build(quiet: true)
 
     gulp.watch([config.styleApp, config.styleSrc], ['style'])
     gulp.watch(config.static, ['static'])
