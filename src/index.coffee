@@ -101,7 +101,7 @@ module.exports = (projectConfig={}) ->
     runSequence('clean', ['src', 'static', 'style', 'watch'], '_serve')
 
 
-  build = ({quiet}) ->
+  build = ({quiet}={}) ->
     browserified.bundle()
       .on('error', (err) ->
         gutil.log('Browserify Error', err)
