@@ -109,7 +109,7 @@ module.exports = (projectConfig={}) ->
       .pipe(source(config.browserify.entries[0]))
       .pipe(buffer())
       .pipe(ugly())
-      .pipe(concat('app.js'))
+      .pipe(concat('development-bundle.js'))
       .pipe(gulp.dest(config.dest))
 
 
@@ -129,7 +129,7 @@ module.exports = (projectConfig={}) ->
   gulp.task 'style', ->
     gulp.src(config.style)
       .pipe(less())
-      .pipe(concat('app.css'))
+      .pipe(concat('style.css'))
       .pipe(gulp.dest(config.dest))
 
 
